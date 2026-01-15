@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
 import json
@@ -60,6 +60,8 @@ def main() -> None:
     ap.add_argument("--device", type=str, default="auto", help="auto|cpu|cuda | default=auto")
     ap.add_argument("--batch_size", type=int, default=32, help="default=32")
     ap.add_argument("--reset_db", action="store_true", help="Delete stage_3_chroma/ before building")
+    ap.add_argument("--append", action="store_true", help="Append to existing collection instead of recreating it")
+    ap.add_argument("--upsert", action="store_true", help="When appending, upsert instead of add (overwrite existing ids)")
     ap.add_argument("--dry_run", action="store_true")
     args = ap.parse_args()
 
@@ -87,6 +89,8 @@ def main() -> None:
         "device": device,
         "batch_size": args.batch_size,
         "reset_db": args.reset_db,
+        "append": args.append,
+        "upsert": args.upsert,
     }
     settings_hash = stable_settings_hash(settings)
 
@@ -126,23 +130,42 @@ def main() -> None:
     # Create Chroma persistent client
     client = chromadb.PersistentClient(path=str(db_dir))
 
-    # Recreate collection (V1: overwrite)
-    try:
-        client.delete_collection(name=args.collection)
-        print(f"[stage_3] deleted existing collection: {args.collection}")
-    except Exception:
-        pass
+    # Create or get collection
+    if args.append:
+        try:
+            collection = client.get_collection(name=args.collection)
+            print(f"[stage_3] using existing collection: {args.collection}")
+        except Exception:
+            collection = client.create_collection(
+                name=args.collection,
+                metadata={
+                    "pipeline_version": PIPELINE_VERSION,
+                    "stage3_version": STAGE3_VERSION,
+                    "embed_model": args.embed_model,
+                    "device": device,
+                    "settings_hash": settings_hash,
+                },
+            )
+            print(f"[stage_3] created collection: {args.collection}")
+    else:
+        try:
+            client.delete_collection(name=args.collection)
+            print(f"[stage_3] deleted existing collection: {args.collection}")
+        except Exception:
+            pass
 
-    collection = client.create_collection(
-        name=args.collection,
-        metadata={
-            "pipeline_version": PIPELINE_VERSION,
-            "stage3_version": STAGE3_VERSION,
-            "embed_model": args.embed_model,
-            "device": device,
-            "settings_hash": settings_hash,
-        },
-    )
+        collection = client.create_collection(
+            name=args.collection,
+            metadata={
+                "pipeline_version": PIPELINE_VERSION,
+                "stage3_version": STAGE3_VERSION,
+                "embed_model": args.embed_model,
+                "device": device,
+                "settings_hash": settings_hash,
+            },
+        )
+
+    add_fn = collection.upsert if (args.append and args.upsert) else collection.add
 
     # Embed and add in batches
     total = 0
@@ -159,7 +182,7 @@ def main() -> None:
             show_progress_bar=False,
         )
 
-        collection.add(
+        add_fn(
             ids=batch_ids,
             documents=batch_docs,
             metadatas=batch_metas,

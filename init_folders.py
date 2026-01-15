@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 import argparse
 from common import ensure_dir
 
@@ -12,13 +12,14 @@ def main() -> None:
     root = Path(args.root).resolve()
     ensure_dir(root / "stage_0_raw")
     ensure_dir(root / "stage_1_clean")
+    ensure_dir(root / "stage_2_chunks")
     ensure_dir(root / "stage_3_chroma")
 
     print("Created/verified folders:")
     print(f" - {root / 'stage_0_raw'}")
     print(f" - {root / 'stage_1_clean'}")
+    print(f" - {root / 'stage_2_chunks'}")
     print(f" - {root / 'stage_3_chroma'}")
-    print(f"Stage 2 output will be: {root / 'stage_2_chunks.jsonl'}")
 
 if __name__ == "__main__":
     main()
