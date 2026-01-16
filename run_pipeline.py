@@ -47,6 +47,7 @@ def main() -> None:
     ap.add_argument("--persist_dir", type=str, default="stage_3_chroma")
     ap.add_argument("--collection", type=str, default="v1_chunks")
     ap.add_argument("--mode", type=str, choices=["rebuild", "append", "upsert"], default="upsert")
+    ap.add_argument("--skip_unchanged", action="store_true", help="When upserting, skip chunks whose hash hasn't changed")
     ap.add_argument("--dry_run", action="store_true")
     args = ap.parse_args()
 
@@ -154,6 +155,7 @@ def main() -> None:
                         *dry_run_flag,
                         "--mode",
                         args.mode,
+                        *(["--skip_unchanged"] if args.skip_unchanged else []),
                     ]
                 )
         else:
@@ -176,6 +178,7 @@ def main() -> None:
                     *dry_run_flag,
                     "--mode",
                     args.mode,
+                    *(["--skip_unchanged"] if args.skip_unchanged else []),
                 ]
             )
 
