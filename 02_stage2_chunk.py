@@ -3,6 +3,7 @@ import argparse
 import re
 import sys
 from collections import Counter, defaultdict
+from datetime import datetime
 from common import (
     configure_stdout,
     iter_markdown_files,
@@ -70,6 +71,12 @@ def build_chunks(src: Path, stage0_root: Path, args: argparse.Namespace) -> tupl
     entry_date = parse_date_field(meta, "journal_entry_date")
     source_date = parse_date_field(meta, "note_creation_date")
     source_hash = sha256_bytes(raw_bytes)
+    source_modified_date = None
+    try:
+        mtime_ts = src.stat().st_mtime
+        source_modified_date = datetime.fromtimestamp(mtime_ts).date().isoformat()
+    except OSError:
+        source_modified_date = None
     parts = [p for p in rel.parts if p not in (".", "")]
     folder = parts[0] if parts else ""
     doc_type = str(meta.get("doc_type") or "").strip() or (folder.lower() if folder else "note")
@@ -157,6 +164,7 @@ def build_chunks(src: Path, stage0_root: Path, args: argparse.Namespace) -> tupl
                     "cleaned_text": chunk_text,
                     "entry_date": entry_date,
                     "source_date": source_date,
+                    "source_modified_date": source_modified_date,
                     "source_hash": source_hash,
                     "content_hash": content_hash,
                     "folder": folder,

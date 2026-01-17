@@ -30,6 +30,7 @@ CHROMA_META_KEYS = [
     "cleaned_text",
     "entry_date",
     "source_date",
+    "source_modified_date",
     "source_hash",
     "content_hash",
     "embed_model",
