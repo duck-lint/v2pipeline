@@ -68,8 +68,7 @@ def process_file(src: Path, stage1_root: Path, rel_path: Path, args: argparse.Na
 def main() -> None:
     configure_stdout()
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage0_path", type=str, help="Path to stage_0_raw file or folder")
-    ap.add_argument("--stage0_md", type=str, help="(deprecated) Path to stage_0_raw/*.md")
+    ap.add_argument("--stage0_path", type=str, required=True, help="Path to stage_0_raw file or folder")
     ap.add_argument("--stage1_dir", type=str, default="stage_1_clean", help="default=stage_1_clean")
     ap.add_argument("--emit_links", action="store_true", help="Write out_links JSON next to cleaned text")
     ap.add_argument("--no_recursive", action="store_true", help="If stage0_path is a folder, do not recurse")
@@ -78,11 +77,7 @@ def main() -> None:
     ap.add_argument("--dry_run", action="store_true")
     args = ap.parse_args()
 
-    src_arg = args.stage0_path or args.stage0_md
-    if not src_arg:
-        raise ValueError("Provide --stage0_path (file or folder) or --stage0_md (deprecated).")
-
-    src_root = Path(src_arg).resolve()
+    src_root = Path(args.stage0_path).resolve()
     stage1_root = Path(args.stage1_dir).resolve()
 
     print(f"[stage_1_clean] args: {args}")

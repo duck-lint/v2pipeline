@@ -6,19 +6,14 @@ from common import iter_markdown_files
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--input_path", type=str, help="Path to a markdown file or a folder")
-    ap.add_argument("--input_md", type=str, help="(deprecated) Path to ONE Obsidian .md note")
+    ap.add_argument("--input_path", type=str, required=True, help="Path to a markdown file or a folder")
     ap.add_argument("--stage0_dir", type=str, default="stage_0_raw", help="Output folder for raw note copy")
     ap.add_argument("--no_recursive", action="store_true", help="If input_path is a folder, do not recurse")
     ap.add_argument("--exclude", action="append", default=[], help="Glob to exclude (repeatable)")
     ap.add_argument("--dry_run", action="store_true", help="Print what would happen; do not copy")
     args = ap.parse_args()
 
-    src_arg = args.input_path or args.input_md
-    if not src_arg:
-        raise ValueError("Provide --input_path (file or folder) or --input_md (deprecated).")
-
-    src_root = Path(src_arg).expanduser().resolve()
+    src_root = Path(args.input_path).expanduser().resolve()
     if not src_root.exists():
         raise FileNotFoundError(f"Not found: {src_root}")
 

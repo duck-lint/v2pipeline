@@ -19,7 +19,6 @@ def main() -> None:
     configure_stdout(errors="replace")
     ap = argparse.ArgumentParser()
     ap.add_argument("--persist_dir", type=str, default="stage_3_chroma", help="default=stage_3_chroma")
-    ap.add_argument("--db_dir", type=str, help="(deprecated) use --persist_dir instead")
     ap.add_argument("--collection", type=str, default="v1_chunks", help="default=v1_chunks")
     ap.add_argument("--query", type=str, required=True, help="required=True")
     ap.add_argument("--k", type=int, default=5, help="default=5")
@@ -42,13 +41,11 @@ def main() -> None:
     else:
         device = args.device
 
-    db_dir = Path(args.persist_dir).resolve()
-    if args.db_dir:
-        db_dir = Path(args.db_dir).resolve()
-    if not db_dir.exists():
-        raise FileNotFoundError(f"Missing persist_dir: {db_dir}")
+    persist_dir = Path(args.persist_dir).resolve()
+    if not persist_dir.exists():
+        raise FileNotFoundError(f"Missing persist_dir: {persist_dir}")
 
-    client = chromadb.PersistentClient(path=str(db_dir))
+    client = chromadb.PersistentClient(path=str(persist_dir))
     collection = client.get_collection(name=args.collection)
 
     model = SentenceTransformer(args.embed_model, device=device)

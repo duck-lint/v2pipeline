@@ -32,17 +32,17 @@ python init_folders.py --root .
 
 2) Stage 0: copy raw notes
 ```bash
-python 00_stage0_copy_raw.py --input_path /path/to/vault --stage0_dir stage_0_raw
+python 00_copy_raw.py --input_path /path/to/vault --stage0_dir stage_0_raw
 ```
 
 3) Stage 1: clean (preserves wikilinks)
 ```bash
-python 01_stage1_clean.py --stage0_path stage_0_raw --stage1_dir stage_1_clean
+python 01_clean.py --stage0_path stage_0_raw --stage1_dir stage_1_clean
 ```
 
 4) Stage 2: chunk (prefer Stage 1 output)
 ```bash
-python 02_stage2_chunk.py --stage0_path stage_0_raw --stage1_dir stage_1_clean --out_dir stage_2_chunks --prefer_stage1
+python 02_chunk.py --stage0_path stage_0_raw --stage1_dir stage_1_clean --out_dir stage_2_chunks --prefer_stage1
 ```
 
 5) Merge per-file JSONL into one
@@ -52,29 +52,29 @@ python merge_chunks_jsonl.py --chunks_dir stage_2_chunks --output_jsonl stage_2_
 
 6) Stage 3: build Chroma index
 ```bash
-python 03_stage3_build_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --persist_dir stage_3_chroma --collection v1_chunks --mode upsert
+python 03_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --persist_dir stage_3_chroma --collection v1_chunks --mode upsert
 ```
 
 ## Stage 3 modes
 
-Rebuild (delete and recreate the collection; optionally reset persist dir):
+Rebuild (delete and recreate the collection):
 ```bash
-python 03_stage3_build_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode rebuild --reset_db
+python 03_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode rebuild
 ```
 
 Append (add only; fails if any ids already exist):
 ```bash
-python 03_stage3_build_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode append
+python 03_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode append
 ```
 
 Upsert (default; overwrite existing ids when supported):
 ```bash
-python 03_stage3_build_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode upsert
+python 03_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode upsert
 ```
 
 Sync deletes (remove stale chunk_ids when chunks change):
 ```bash
-python 03_stage3_build_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode upsert --sync_deletes
+python 03_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode upsert --sync_deletes
 ```
 
 ## Common flags

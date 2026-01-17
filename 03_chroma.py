@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import shutil
 import hashlib
 from datetime import datetime
 from pathlib import Path
@@ -84,12 +83,10 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--chunks_jsonl", type=str, default="stage_2_chunks.jsonl", help="default=stage_2_chunks.jsonl")
     ap.add_argument("--persist_dir", type=str, default="stage_3_chroma", help="default=stage_3_chroma")
-    ap.add_argument("--db_dir", type=str, help="(deprecated) use --persist_dir instead")
     ap.add_argument("--collection", type=str, default="v1_chunks", help="default=v1_chunks")
     ap.add_argument("--embed_model", type=str, default="sentence-transformers/all-MiniLM-L6-v2", help="default=sentence-transformers/all-MiniLM-L6-v2")
     ap.add_argument("--device", type=str, default="auto", help="auto|cpu|cuda | default=auto")
     ap.add_argument("--batch_size", type=int, default=32, help="default=32")
-    ap.add_argument("--reset_db", action="store_true", help="Delete persist_dir before building (rebuild only)")
     ap.add_argument("--mode", type=str, choices=["rebuild", "append", "upsert"], default="upsert")
     ap.add_argument("--skip_unchanged", action="store_true", help="When upserting, skip chunks whose hash hasn't changed")
     ap.add_argument("--sync_deletes", action="store_true", help="Delete stale chunks not present in input (upsert only)")
@@ -100,8 +97,6 @@ def main() -> None:
 
     chunks_path = Path(args.chunks_jsonl).resolve()
     persist_dir = Path(args.persist_dir).resolve()
-    if args.db_dir:
-        persist_dir = Path(args.db_dir).resolve()
 
     if not chunks_path.exists():
         raise FileNotFoundError(f"Missing chunks file: {chunks_path}")
@@ -126,7 +121,6 @@ def main() -> None:
         "embed_model": args.embed_model,
         "device": device,
         "batch_size": args.batch_size,
-        "reset_db": args.reset_db,
         "mode": args.mode,
         "skip_unchanged": args.skip_unchanged,
         "sync_deletes": args.sync_deletes,
@@ -154,11 +148,6 @@ def main() -> None:
     if args.dry_run:
         print("[stage_3] dry_run=True (not embedding / not writing DB)")
         return
-
-    # Reset persist directory if requested (rebuild mode only)
-    if args.reset_db and args.mode == "rebuild" and persist_dir.exists():
-        shutil.rmtree(persist_dir)
-        print(f"[stage_3] deleted persist_dir: {persist_dir}")
 
     persist_dir.mkdir(parents=True, exist_ok=True)
 

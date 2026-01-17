@@ -64,7 +64,7 @@ def main() -> None:
     run_cmd(
         [
             python,
-            "00_stage0_copy_raw.py",
+            "00_copy_raw.py",
             "--input_path",
             args.input_path,
             "--stage0_dir",
@@ -83,7 +83,7 @@ def main() -> None:
     run_cmd(
         [
             python,
-            "01_stage1_clean.py",
+            "01_clean.py",
             "--stage0_path",
             args.stage0_dir,
             "--stage1_dir",
@@ -103,7 +103,7 @@ def main() -> None:
     run_cmd(
         [
             python,
-            "02_stage2_chunk.py",
+            "02_chunk.py",
             "--stage0_path",
             args.stage0_dir,
             "--stage1_dir",
@@ -145,7 +145,7 @@ def main() -> None:
                 run_cmd(
                     [
                         python,
-                        "03_stage3_build_chroma.py",
+                        "03_chroma.py",
                         "--chunks_jsonl",
                         str(path),
                         "--persist_dir",
@@ -168,7 +168,7 @@ def main() -> None:
             run_cmd(
                 [
                     python,
-                    "03_stage3_build_chroma.py",
+                    "03_chroma.py",
                     "--chunks_jsonl",
                     chunks_input,
                     "--persist_dir",
