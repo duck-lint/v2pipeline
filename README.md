@@ -111,5 +111,5 @@ python query.py --persist_dir stage_3_chroma --collection v1_chunks --query "ass
 - `stage_2_chunks` contains per-file `*.chunks.jsonl`. `merge_chunks_jsonl.py` only merges those files.
 - `stage_3_chroma` is a Chroma persistent directory. Use a new `--persist_dir` for test runs if you hit file locks on Windows.
 - Naming convention:
-- `*_path` is a file path or file-or-folder input.
-- `*_dir` is always a directory.
+    - `*_path` is a file path or file-or-folder input.
+    - `*_dir` is always a directory.
