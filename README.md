@@ -9,6 +9,7 @@ Use a Python 3.11 virtual environment for this repo. Stage 3 CUDA only works if 
 inside the venv that has the CUDA-enabled torch build.
 
 ```bash
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
