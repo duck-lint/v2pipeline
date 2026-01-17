@@ -1,9 +1,9 @@
 import chromadb
 from pathlib import Path
 
-PERSIST_DIR = r"C:\Users\madis\Projects\rag-lab\gitversions\RAG-pipeline-v2trial\stage_3_chroma_test5"
+PERSIST_DIR = r"path\to\dir"
 COLLECTION = "v1_chunks"
-DOC_ID = "a5bee0ef92a3dd632aa678d6"
+DOC_ID = "doc_id"
 
 client = chromadb.PersistentClient(path=str(Path(PERSIST_DIR)))
 coll = client.get_collection(name=COLLECTION)
