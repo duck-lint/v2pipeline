@@ -1,3 +1,6 @@
+--extra-index-url https://download.pytorch.org/whl/cu130
+torch==2.9.1+cu130
+torchvision==0.24.1+cu130
 annotated-types==0.7.0
 anyio==4.12.0
 argon2-cffi==25.1.0

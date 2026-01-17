@@ -14,11 +14,14 @@ py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-# Install CUDA-enabled torch (pick the CUDA build that matches your driver)
-# Common picks: cu118, cu121, cu130. See https://pytorch.org/get-started/locally/
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
 python -c "import torch; print('cuda available:', torch.cuda.is_available())"
 ```
+
+If `cuda_available` is false:
+- Confirm you're in the venv: `where python` should point to `.venv`.
+- Check the torch build: `python -c "import torch; print(torch.__version__); print(torch.version.cuda)"` (the CUDA field should not be `None`).
+- Verify the GPU is visible to the OS/driver (`nvidia-smi` should list your grahics card).
+- Reinstall torch with a supported CUDA build for your driver (use the selector link above).
 
 ## Quick start
 
