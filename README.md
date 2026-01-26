@@ -1,6 +1,6 @@
 # RAG Pipeline v2
 
-A local-first, reproducible Markdown → Chroma ingestion pipeline designed for iterative experimentation with chunking strategies, metadata schemas, and embedding models.
+A local-first, reproducible Markdown -> Chroma ingestion pipeline designed for iterative experimentation with chunking strategies, metadata schemas, and embedding models.
 
 The pipeline is explicitly staged to preserve provenance and enable clean, repeatable rebuilds as documents evolve.
 
@@ -61,7 +61,7 @@ python init_folders.py --root .
 
 ---
 
-### 2) Stage 0 — snapshot raw inputs
+### 2) Stage 0 -- snapshot raw inputs
 
 Copies notes into `stage_0_raw` using `shutil.copy2()` to preserve filesystem timestamps.
 
@@ -76,7 +76,7 @@ python 00_copy_raw.py --input_path /path/to/vault --stage0_dir stage_0_raw
 
 ---
 
-### 3) Stage 1 — clean text
+### 3) Stage 1 -- clean text
 
 Removes noise (frontmatter handling, normalization) while preserving Obsidian wikilinks.
 
@@ -86,7 +86,7 @@ python 01_clean.py --stage0_path stage_0_raw --stage1_dir stage_1_clean
 
 ---
 
-### 4) Stage 2 — chunk into JSONL
+### 4) Stage 2 -- chunk into JSONL
 
 Splits notes into paragraph-aligned chunks with stable document identity and structured metadata. When available, prefers Stage 1 output.
 
@@ -112,7 +112,7 @@ python merge_chunks_jsonl.py \
 
 ---
 
-### 6) Stage 3 — build Chroma index
+### 6) Stage 3 -- build Chroma index
 
 Embeds chunks and writes them into a persistent Chroma collection.
 
@@ -152,11 +152,11 @@ python 03_chroma.py --chunks_jsonl stage_2_chunks_merged.jsonl --mode upsert --s
 
 ## Common flags
 
-File discovery (Stages 0–2):
+File discovery (Stages 0-2):
 - `--no_recursive` to disable recursion when input is a folder
 - `--exclude` (repeatable) to skip glob patterns (e.g. `.obsidian/**`)
 
-YAML handling (Stages 1–2):
+YAML handling (Stages 1-2):
 - `--yaml_mode strict|lenient`
   - `lenient` logs `yaml_error` and continues
 
@@ -189,5 +189,5 @@ python query.py --persist_dir stage_3_chroma --collection v1_chunks --query "ass
 - `stage_2_chunks` contains per-note `*.chunks.jsonl` files; `merge_chunks_jsonl.py` only merges these artifacts.
 - `stage_3_chroma` is a persistent Chroma directory. Use a new `--persist_dir` for test runs if you encounter file locks on Windows.
 - Naming conventions:
-  - `*_path` → file path or file-or-folder input
-  - `*_dir` → directory (output or persistent storage)
+  - `*_path` -> file path or file-or-folder input
+  - `*_dir` -> directory (output or persistent storage)
