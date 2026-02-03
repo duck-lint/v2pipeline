@@ -49,7 +49,35 @@ If `cuda_available` is false:
 
 ---
 
-## Quick start
+## New usage (module / CLI)
+
+Install editable and use the module entrypoint (or the console script):
+
+```bash
+pip install -e .
+python -m pipeline --help
+python -m pipeline run --top_to_bottom --input_path /path/to/vault --dry_run
+```
+
+Common commands:
+
+```bash
+python -m pipeline init-folders --root .
+python -m pipeline stage0 --input_path /path/to/vault --stage0_dir stage_0_raw
+python -m pipeline stage1 --stage0_path stage_0_raw --stage1_dir stage_1_clean
+python -m pipeline stage2 --stage0_path stage_0_raw --stage1_dir stage_1_clean --out_dir stage_2_chunks --prefer_stage1
+python -m pipeline merge --chunks_dir stage_2_chunks --output_jsonl stage_2_chunks_merged.jsonl
+python -m pipeline stage3 --chunks_jsonl stage_2_chunks_merged.jsonl --persist_dir stage_3_chroma --collection v1_chunks --mode upsert
+python -m pipeline query --persist_dir stage_3_chroma --collection v1_chunks --query \"assumption ledger\"
+```
+
+You can also use the console script if installed: `pipeline ...`
+
+---
+
+## Legacy wrappers (back-compat)
+
+The original scripts still work, but are now wrappers around the `pipeline` package.
 
 ### 1) Initialize stage folders
 

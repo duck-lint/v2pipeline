@@ -1,0 +1,17 @@
+Set-Content -Path .gitignore -Value @"
+# never commit the virtual environment or manifests
+.venv/
+_workroot_manifests/
+_workroot_transcripts/
+
+# python junk
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+
+# OS junk
+.DS_Store
+Thumbs.db
+"@

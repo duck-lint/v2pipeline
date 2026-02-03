@@ -1,25 +1,22 @@
-﻿from pathlib import Path
-import argparse
-from common import ensure_dir
+﻿from __future__ import annotations
 
-def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--root", type=str, default=".", help="Project root")
-    args = ap.parse_args()
+import sys
+from pathlib import Path
 
-    print(f"[stage_folders] args: {args}")
 
-    root = Path(args.root).resolve()
-    ensure_dir(root / "stage_0_raw")
-    ensure_dir(root / "stage_1_clean")
-    ensure_dir(root / "stage_2_chunks")
-    ensure_dir(root / "stage_3_chroma")
+def _ensure_src_on_path() -> None:
+    repo_root = Path(__file__).resolve().parent
+    src_path = repo_root / "src"
+    if src_path.exists() and str(src_path) not in sys.path:
+        sys.path.insert(0, str(src_path))
 
-    print("Created/verified folders:")
-    print(f" - {root / 'stage_0_raw'}")
-    print(f" - {root / 'stage_1_clean'}")
-    print(f" - {root / 'stage_2_chunks'}")
-    print(f" - {root / 'stage_3_chroma'}")
+
+def main() -> int:
+    _ensure_src_on_path()
+    from pipeline.tools.init_folders import main as _main
+
+    return _main()
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
