@@ -24,7 +24,7 @@ Stages:
 
 ## Environment (Python 3.11)
 
-Use a Python 3.11 virtual environment for this repo.
+This repo targets **Python 3.11**. Newer versions can force source builds of ML deps and break installs.
 Stage 3 (embedding) supports CUDA only when running inside a venv that has a CUDA-enabled torch build.
 
 ```bash
